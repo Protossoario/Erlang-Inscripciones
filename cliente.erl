@@ -1,13 +1,17 @@
 -module(cliente).
--export([login/2, registrar/2]).
+-export([login/2, registrar/2, logoff/0]).
 
-registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
+%registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
+registro_node() -> 'registro@Patricios-MBP-4'.
 
 login(Usuario, Contrasenia) ->
 	llama_registro({login, Usuario, Contrasenia}).
 
 registrar(Usuario, Contrasenia) ->
 	llama_registro({registrar, Usuario, Contrasenia}).
+
+logoff() ->
+  llama_registro({logoff}).
 
 llama_registro(Mensaje) ->
 	Node = registro_node(),
