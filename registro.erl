@@ -88,6 +88,9 @@ servidor(Registrados, Loggeados) ->
 							De ! {servidor_registro, login_rechazado},
 							servidor(Registrados, Loggeados)
 					end;
+        usuario_loggeado ->
+          De ! {servidor_registro, login_aceptado_sesion_existente},
+					servidor(Registrados, Loggeados);
 				_ ->
 					De ! {servidor_registro, sesion_invalida},
 					servidor(Registrados, Loggeados)

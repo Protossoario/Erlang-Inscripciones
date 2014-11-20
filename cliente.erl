@@ -24,12 +24,14 @@ llama_registro(Mensaje) ->
 			case Respuesta of
 				login_aceptado ->
 					io:format("Bienvenido.~n");
+        login_aceptado_sesion_existente ->
+          io:format("Bienvenido, tienes mas de una sesion abierta.~n");
 				login_rechazado ->
 					io:format("Usuario o contrasenia invalidos.~n");
 				sesion_iniciada ->
 					io:format("Ya iniciaste sesion.~n");
 				sesion_invalida ->
-					io:format("Alivianate a la verga, morro.~n");
+					io:format("Primero has logoff del usuario actual.~n");
 				registro_aceptado ->
 					io:format("Usuario registrado.~n");
 				registro_rechazado ->
