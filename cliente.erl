@@ -20,7 +20,26 @@ llama_registro(Mensaje) ->
 	receive
 		{servidor_registro, Respuesta} ->
 			monitor_node(Node, false),
-			Respuesta;
+			case Respuesta of
+				login_aceptado ->
+					io:format("Bienvenido.~p");
+				login_rechazado ->
+					io:format("Usuario o contrasenia invalidos.~p");
+				sesion_iniciada ->
+					io:format("Ya iniciaste sesion.~p");
+				sesion_invalida ->
+					io:format("Alivianate a la verga, morro.~p");
+				registro_aceptado ->
+					io:format("Usuario registrado.~p");
+				registro_rechazado ->
+					io:format("Usuario ya existe.~p");
+				logoff_aceptado ->
+					io:format("Sesion cerrada.~p");
+				logoff_rechazado ->
+					io:format("No hay sesion iniciada.~p");
+				_ ->
+					io:format("Respuesta no reconocida (algo anda mal).~p")
+			end;
 		{nodedown, Node} ->
 			no
 	end.
