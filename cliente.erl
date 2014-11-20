@@ -45,4 +45,6 @@ llama_registro(Mensaje) ->
 			no;
 		_ ->
 			io:format("ERROR: Respuesta en formato incorrecto.~n")
+	after 30000 ->
+		  io:format("ERROR: Timeout.~n")
 	end.
