@@ -32,8 +32,8 @@ buscar_nodo(_, _) -> no_existe.
 loggeado(PID, Usuario, [ {PID, Usuario} | _ ]) -> aceptado;
 loggeado(PID, _, [ {PID, _} | _ ]) -> nodo_loggeado;
 loggeado(_, Usuario, [ {_, Usuario} | _ ]) -> usuario_loggeado;
-loggeado(_, _, []) -> no_loggeado;
-loggeado(PID, Usuario, [ _ | T ]) -> loggeado(PID, Usuario, T).
+loggeado(PID, Usuario, [ _ | T ]) -> loggeado(PID, Usuario, T);
+loggeado(_, _, _) -> no_loggeado.
 
 % Agrega el usuario a la cabeza de la lista de usuarios registrados.
 % Regresa la nueva lista.
@@ -69,11 +69,15 @@ logoff(_, []) -> [].
 % - logoff_aceptado: cuando recibe un mensaje de logoff y se cierra sesion con exito
 % - logoff_rechazado: cuando recibe un mensaje de logoff de un nodo que no ha iniciado sesion
 servidor(Registrados, Loggeados) ->
+	% Imprimir el estado del servidor
+	io:format("~n-------------------------------------------------------------~n"),
+	io:format("Registrados:~n~p~nLoggeados:~n~p~n", [Registrados, Loggeados]),
+	io:format("-------------------------------------------------------------~n"),
 	receive
 		{De, {login, Usuario, Contrasenia}} ->
 			case loggeado(De, Usuario, Loggeados) of
 				aceptado ->
-					De ! {servidor_registrado, sesion_iniciada},
+					De ! {servidor_registro, sesion_iniciada},
 					servidor(Registrados, Loggeados);
 				no_loggeado ->
 					case login(Usuario, Contrasenia, Registrados) of
@@ -85,7 +89,7 @@ servidor(Registrados, Loggeados) ->
 							servidor(Registrados, Loggeados)
 					end;
 				_ ->
-					De ! {servidor_registrado, sesion_invalida},
+					De ! {servidor_registro, sesion_invalida},
 					servidor(Registrados, Loggeados)
 			end;
 		{De, {registrar, Usuario, Contrasenia}} ->
@@ -105,7 +109,9 @@ servidor(Registrados, Loggeados) ->
 				_ ->
 					De ! {servidor_registro, logoff_rechazado},
 					servidor(Registrados, Loggeados)
-			end
+			end;
+		_ ->
+			io:format("[SERVIDOR_REGISTRO]: Mensaje no reconocido.~n")
 	end.
 
 inicio() ->

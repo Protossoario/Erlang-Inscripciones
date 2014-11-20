@@ -2,7 +2,8 @@
 -export([login/2, registrar/2, logoff/0]).
 
 %registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
-registro_node() -> 'registro@Patricios-MBP-4'.
+%registro_node() -> 'registro@Patricios-MBP-4'.
+registro_node() -> 'registro@localhost'.
 
 login(Usuario, Contrasenia) ->
 	llama_registro({login, Usuario, Contrasenia}).
@@ -22,24 +23,26 @@ llama_registro(Mensaje) ->
 			monitor_node(Node, false),
 			case Respuesta of
 				login_aceptado ->
-					io:format("Bienvenido.~p");
+					io:format("Bienvenido.~n");
 				login_rechazado ->
-					io:format("Usuario o contrasenia invalidos.~p");
+					io:format("Usuario o contrasenia invalidos.~n");
 				sesion_iniciada ->
-					io:format("Ya iniciaste sesion.~p");
+					io:format("Ya iniciaste sesion.~n");
 				sesion_invalida ->
-					io:format("Alivianate a la verga, morro.~p");
+					io:format("Alivianate a la verga, morro.~n");
 				registro_aceptado ->
-					io:format("Usuario registrado.~p");
+					io:format("Usuario registrado.~n");
 				registro_rechazado ->
-					io:format("Usuario ya existe.~p");
+					io:format("Usuario ya existe.~n");
 				logoff_aceptado ->
-					io:format("Sesion cerrada.~p");
+					io:format("Sesion cerrada.~n");
 				logoff_rechazado ->
-					io:format("No hay sesion iniciada.~p");
+					io:format("No hay sesion iniciada.~n");
 				_ ->
-					io:format("Respuesta no reconocida (algo anda mal).~p")
+					io:format("ERROR: Respuesta del servidor no reconocida.~n")
 			end;
 		{nodedown, Node} ->
-			no
+			no;
+		_ ->
+			io:format("ERROR: Respuesta en formato incorrecto.~n")
 	end.
