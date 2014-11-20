@@ -29,11 +29,11 @@ buscar_nodo(_, _) -> no_existe.
 % - nodo_loggeado: el nodo ya tiene un usuario con sesion abierta
 % - usuario_loggeado: el usuario ya tiene una sesion abierta en otro nodo
 % - no_loggeado: el usuario no ha iniciado sesion y el nodo esta disponible
-loggeado(PID, Usuario, [ {PID, Usuario} | _ ] -> aceptado;
-loggeado(PID, Usuario, [ {PID, _} | _ ] -> nodo_loggeado;
-loggeado(_, Usuario, [ {_, Usuario} | _ ] -> usuario_loggeado;
+loggeado(PID, Usuario, [ {PID, Usuario} | _ ]) -> aceptado;
+loggeado(PID, _, [ {PID, _} | _ ]) -> nodo_loggeado;
+loggeado(_, Usuario, [ {_, Usuario} | _ ]) -> usuario_loggeado;
 loggeado(_, _, []) -> no_loggeado;
-loggeado(PID, Usuario, [ _ | T ] -> loggeado(PID, Usuario, T);
+loggeado(PID, Usuario, [ _ | T ]) -> loggeado(PID, Usuario, T).
 
 % Agrega el usuario a la cabeza de la lista de usuarios registrados.
 % Regresa la nueva lista.
@@ -71,7 +71,7 @@ logoff(_, []) -> [].
 servidor(Registrados, Loggeados) ->
 	receive
 		{De, {login, Usuario, Contrasenia}} ->
-			case loggeado(De, Usuario) of
+			case loggeado(De, Usuario, Loggeados) of
 				aceptado ->
 					De ! {servidor_registrado, sesion_iniciada},
 					servidor(Registrados, Loggeados);
@@ -95,7 +95,7 @@ servidor(Registrados, Loggeados) ->
 					servidor(Registrados, Loggeados);
 				_ ->
 					De ! {servidor_registro, registro_aceptado},
-					servidor(registrar(Usuario, Contrasenia, Registrados), Loggeados);
+					servidor(registrar(Usuario, Contrasenia, Registrados), Loggeados)
 			end;
 		{De, {logoff}} ->
 			case buscar_nodo(De, Loggeados) of
