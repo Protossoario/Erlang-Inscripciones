@@ -14,7 +14,7 @@ eliminar_usuario(_, []) -> [].
 
 evento(Capacidad, Inscritos) ->
     receive
-        {De, {registrar, Usuario} } ->
+        {De, {registrar, {Pid,Usuario}} } ->
             case buscar_usuario(Usuario, Inscritos) of
                 existe ->
                     De ! {self(), ya_inscrito},
@@ -22,35 +22,35 @@ evento(Capacidad, Inscritos) ->
                 no_existe ->
                     if
                         length(Inscritos) < Capacidad ->
-                            De ! {self(), inscripcion_exitosa},
+                        Pid ! inscripcion_exitosa,
                             evento(Capacidad, [Inscritos|Usuario]);
                         true ->
-                            De ! {self(), evento_lleno},
+                            Pid ! evento_lleno,
                             evento(Capacidad, Inscritos)
                     end
             end;
 
-        {De, {eliminar, Usuario} } ->
+        {De, {eliminar, {Pid,Usuario}} } ->
             case buscar_usuario(Usuario, Inscritos) of
                 existe ->
-                    De ! {self(), usuario_eliminado},
+                    Pid ! usuario_eliminado,
                     evento(Capacidad, eliminar_usuario(Usuario, Inscritos));
                 no_existe ->
-                    De ! {self(), usuario_no_existe},
+                    Pid ! usuario_no_existe,
                     evento(Capacidad, Inscritos)
             end;
 
         {De, consultar} ->
-            De ! {self(), {consulta_exitosa, Capacidad, Inscritos}},
+            De ! {consulta_exitosa, Capacidad, Inscritos},
             evento(Capacidad, Inscritos);
 
-        {De, {cambiar_capacidad, N}}->
+        {De, {cambiar_capacidad, Pid, N}}->
             if
                 N > length(Inscritos) ->
-                    De ! {self(), capacidad_cambiada},
+                    Pid ! {self(), capacidad_cambiada},
                     evento(N, Inscritos);
                 true -> 
-                    De ! {self(), error_capacidad_no_valida},
+                    Pid ! {self(), error_capacidad_no_valida},
                     evento(Capacidad, Inscritos)
             end
     end.
