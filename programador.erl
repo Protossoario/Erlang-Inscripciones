@@ -61,7 +61,7 @@ programador(Eventos) ->
                 no_existe ->
                     De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
-                    Pid ! {self(), {eliminar, { Pid, Usuario }}}
+                    Pid ! {self(), {eliminar, { De, Usuario }}}
             end,
             programador(Eventos);
 
