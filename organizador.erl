@@ -1,4 +1,4 @@
--module(cliente).
+-module(organizador).
 -export([login/2, registrar/2, logoff/0]).
 
 %registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
@@ -17,15 +17,15 @@ logoff() ->
 llama_registro(Mensaje) ->
 	Node = registro_node(),
 	monitor_node(Node, true),
-	{servidor_registro, Node} ! {self(), usuario, Mensaje},
+	{servidor_registro, Node} ! {self(), organizador, Mensaje},
 	receive
 		{servidor_registro, Respuesta} ->
 			monitor_node(Node, false),
 			case Respuesta of
 				login_aceptado ->
-					io:format("Bienvenido.~n");
+					io:format("Bienvenido Organizador.~n");
         login_aceptado_sesion_existente ->
-          io:format("Bienvenido, tienes mas de una sesion abierta.~n");
+          io:format("Bienvenido Organizador, tienes mas de una sesion abierta.~n");
 				login_rechazado ->
 					io:format("Usuario o contrasenia invalidos.~n");
 				sesion_iniciada ->
@@ -33,9 +33,9 @@ llama_registro(Mensaje) ->
 				sesion_invalida ->
 					io:format("Primero has logoff del usuario actual.~n");
 				registro_aceptado ->
-					io:format("Usuario registrado.~n");
+					io:format("Organizador registrado.~n");
 				registro_rechazado ->
-					io:format("Usuario ya existe.~n");
+					io:format("Organizador ya existe.~n");
 				logoff_aceptado ->
 					io:format("Sesion cerrada.~n");
 				logoff_rechazado ->
@@ -50,3 +50,4 @@ llama_registro(Mensaje) ->
 	after 30000 ->
 		  io:format("ERROR: Timeout.~n")
 	end.
+
