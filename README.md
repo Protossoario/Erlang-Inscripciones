@@ -21,6 +21,12 @@ Con esto se correra la terminal de erlang para el namespace de registro. Dentro 
 c(registro), c(cliente), c(organizador), c(programador), c(evento).
 ```
 ###Comandos
+####Registro
+
+```
+registro:inicio().
+```
+
 ####Cliente
 
 ```
