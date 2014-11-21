@@ -2,9 +2,9 @@
 -export([login/2, registrar/2, logoff/0, crear_evento/2, eliminar_evento/1, modificar_capacidad/2]).
 
 %registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
-%registro_node() -> 'registro@Patricios-MacBook-Pro-4'.
+registro_node() -> 'registro@Patricios-MacBook-Pro-4'.
 %registro_node() -> 'registro@localhost'.
-registro_node() -> 'registro@ppesq-U52F'.
+%registro_node() -> 'registro@ppesq-U52F'.
 
 login(Usuario, Contrasenia) ->
 	llama_registro({login, Usuario, Contrasenia}).
@@ -51,7 +51,7 @@ llama_registro(Mensaje) ->
 				logoff_rechazado ->
 					io:format("No hay sesion iniciada.~n");
         error_organizador_no_loggeado ->
-          io:formato("No tienes permiso para hacer esta operacion.");
+          io:format("No tienes permiso para hacer esta operacion.~n");
 				_ ->
 					io:format("ERROR: Respuesta del servidor no reconocida.~n")
 			end;

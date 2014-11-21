@@ -19,7 +19,7 @@ programador(Eventos) ->
                 no_existe ->
                     De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
-                    Pid ! {servidor_programador, {registrar, Pid, Usuario}}
+                    Pid ! {servidor_programador, {registrar, De, Usuario}}
             end,
             programador(Eventos);
 
@@ -31,7 +31,7 @@ programador(Eventos) ->
             case buscar_evento(Nombre, Eventos) of
                 no_existe ->
                     De ! {servidor_programador, evento_creado},
-                    programador([Eventos | {spawn_link(evento,evento,[Capacidad,[]]), Nombre}]);
+                    programador([{spawn_link(evento,evento,[Capacidad,[]]), Nombre} | Eventos]);
                 _ ->
                     De ! {servidor_programador, error_evento_existe},
                     programador(Eventos)
