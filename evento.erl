@@ -1,5 +1,5 @@
 -module(evento).
--compile(export_all).
+-export([evento/2]).
 
 % Busca en la lista de usuarios inscritos si el usuario existe.
 % - existe: el usuario esta en la lista.
@@ -67,7 +67,7 @@ evento(Capacidad, Inscritos) ->
                 N > length(Inscritos) ->
                     Pid ! {self(), capacidad_cambiada},
                     evento(N, Inscritos);
-                true -> 
+                true ->
                     Pid ! {self(), error_capacidad_no_valida},
                     evento(Capacidad, Inscritos)
             end
