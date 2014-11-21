@@ -27,15 +27,15 @@ evento(Capacidad, Inscritos) ->
         {De, {registrar, {Pid,Usuario}} } ->
             case buscar_usuario(Usuario, Inscritos) of
                 existe ->
-                    Pid ! {self(), ya_inscrito},
+                    Pid ! {servidor_evento, ya_inscrito},
                     evento(Capacidad, Inscritos);
                 no_existe ->
                     if
                         length(Inscritos) < Capacidad ->
-                        Pid ! inscripcion_exitosa,
+                        Pid ! {servidor_evento, inscripcion_exitosa},
                             evento(Capacidad, [Inscritos|Usuario]);
                         true ->
-                            Pid ! evento_lleno,
+                            Pid ! {servidor_evento, evento_lleno},
                             evento(Capacidad, Inscritos)
                     end
             end;
@@ -46,17 +46,17 @@ evento(Capacidad, Inscritos) ->
         {De, {eliminar, {Pid,Usuario}} } ->
             case buscar_usuario(Usuario, Inscritos) of
                 existe ->
-                    Pid ! usuario_eliminado,
+                    Pid ! {servidor_evento, usuario_eliminado},
                     evento(Capacidad, eliminar_usuario(Usuario, Inscritos));
                 no_existe ->
-                    Pid ! usuario_no_existe,
+                    Pid ! {servidor_evento, usuario_no_existe},
                     evento(Capacidad, Inscritos)
             end;
 
         % Consulta la informacion de un evento.
         % - consulta_exitosa: envia la capacidad y la lista de inscritos de un evento.
         {De, consultar} ->
-            De ! {consulta_exitosa, Capacidad, Inscritos},
+            De ! {servidor_evento, { consulta_exitosa, Capacidad, Inscritos }},
             evento(Capacidad, Inscritos);
 
         % Cambia la capacidad de un evento.
@@ -65,10 +65,10 @@ evento(Capacidad, Inscritos) ->
         {De, {cambiar_capacidad, Pid, N}}->
             if
                 N > length(Inscritos) ->
-                    Pid ! {self(), capacidad_cambiada},
+                    Pid ! {servidor_evento, capacidad_cambiada},
                     evento(N, Inscritos);
-                true -> 
-                    Pid ! {self(), error_capacidad_no_valida},
+                true ->
+                    Pid ! {servidor_evento, error_capacidad_no_valida},
                     evento(Capacidad, Inscritos)
             end
     end.

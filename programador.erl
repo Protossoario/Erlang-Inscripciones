@@ -17,49 +17,58 @@ programador(Eventos) ->
         {De, {inscribir, {Evento, Usuario}}} ->
             case buscar_evento(Evento, Eventos) of
                 no_existe ->
-                    De ! {self(), error_evento_no_existe};
+                    De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
-                    Pid ! {self(), {registrar, {Pid, Usuario}}}
+                    Pid ! {servidor_programador, {registrar, Pid, Usuario}}
             end,
             programador(Eventos);
 
-        {De, listar_eventos} ->
-            De ! {self(), {listado_exitoso, Eventos}},
+        {De, { listar_eventos }} ->
+            De ! {servidor_programador, {listado_exitoso, Eventos}},
             programador(Eventos);
 
-        {De, {crear_eventos, {Nombre, Capacidad}}} ->
+        {De, {crear_evento, {Nombre, Capacidad}}} ->
             case buscar_evento(Nombre, Eventos) of
                 no_existe ->
-                    De ! {self(), evento_creado},
+                    De ! {servidor_programador, evento_creado},
                     programador([Eventos | {spawn_link(evento,evento,[Capacidad,[]]), Nombre}]);
                 _ ->
-                    De ! {self(), error_evento_existe},
+                    De ! {servidor_programador, error_evento_existe},
                     programador(Eventos)
             end;
 
-        {De, {eliminar_evento, {Nombre}}} ->
+        {De, {eliminar_evento, Nombre}} ->
             case buscar_evento(Nombre, Eventos) of
                 no_existe ->
-                    De ! {self(), error_evento_no_existe},
+                    De ! {servidor_programador, error_evento_no_existe},
                     programador(Eventos);
                 Pid ->
-                    De ! {self(), evento_borrado},
+                    De ! {servidor_programador, evento_borrado},
                     programador(eliminar_evento(Pid, Eventos))
             end;
 
         {De, {modificar_capacidad, {Nombre, N}}} ->
             case buscar_evento(Nombre, Eventos) of
                 no_existe ->
-                    De ! {self(), error_evento_no_existe};
+                    De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
-                    Pid ! {self(), {cambiar_capacidad, Pid, N}}
+                    Pid ! {servidor_programador, {cambiar_capacidad, Pid, N}}
+            end,
+            programador(Eventos);
+
+        {De, {eliminar_usuario, {Nombre, Usuario}}} ->
+            case buscar_evento(Nombre, Eventos) of
+                no_existe ->
+                    De ! {servidor_programador, error_evento_no_existe};
+                Pid ->
+                    Pid ! {self(), {eliminar, { Pid, Usuario }}}
             end,
             programador(Eventos);
 
         {De, {listar_inscritos, Nombre}} ->
             case buscar_evento(Nombre, Eventos) of
                 no_existe ->
-                    De ! {self(), error_evento_no_existe};
+                    De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
                     Pid ! {De, consultar}
             end,

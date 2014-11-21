@@ -26,6 +26,15 @@ buscar_usuario(Usuario, Tipo, [ {Tipo, Usuario, _} | _ ]) -> existe;
 buscar_usuario(Usuario, Tipo, [ _ | T ]) -> buscar_usuario(Usuario, Tipo, T);
 buscar_usuario(_,_,_) -> no_existe.
 
+% Busca en la lista de usuarios loggeados el nombre del usuario a partir de un pid
+obtener_nombre(Pid, Tipo, [ {Pid, Tipo, Usuario} | _ ]) -> Usuario;
+obtener_nombre(Pid, Tipo, [ _ | T ]) -> obtener_nombre(Pid, Tipo, T);
+obtener_nombre(_,_,_) -> no_existe.
+
+organizador_loggeado(PID, Tipo ,  [ {PID, organizador, _} | _ ]) -> existe;
+organizador_loggeado(PID, Tipo, [ _ | T ]) -> organizador_loggeado(PID, Tipo, T);
+organizador_loggeado(_, _, _) -> no_existe.
+
 % Busca en la lista de nodos loggeados si el nodo existe.
 % - existe: el nodo tiene un usuario loggeado.
 % - no_existe: el nodo no esta en la lista de loggeados.
@@ -39,7 +48,7 @@ buscar_nodo(_, _) -> no_existe.
 % - usuario_loggeado: el usuario ya tiene una sesion abierta en otro nodo
 % - no_loggeado: el usuario no ha iniciado sesion y el nodo esta disponible
 loggeado(PID, Usuario, Tipo, [ {PID, Tipo, Usuario} | _ ]) -> aceptado;
-loggeado(PID, _, _, [ {PID, _, _} | _ ]) -> nodo_loggeado;
+loggeado(PID, _, _, [ {PID, _, _} |_ ]) -> nodo_loggeado;
 loggeado(_, Tipo, Usuario, [ {_, Tipo, Usuario} | _ ]) -> usuario_loggeado;
 loggeado(PID, Usuario, Tipo, [ _ | T ]) -> loggeado(PID, Usuario, Tipo, T);
 loggeado(_, _, _, _) -> no_loggeado.
@@ -122,6 +131,40 @@ servidor(Registrados, Loggeados) ->
 					De ! {servidor_registro, logoff_rechazado},
 					servidor(Registrados, Loggeados)
 			end;
+        {De, UserType, {inscribir_evento, Evento}} ->
+            case obtener_nombre(De, UserType, Loggeados) of
+                no_existe -> 
+                    De ! {servidor_registro, error_usuario_no_loggeado};
+                Nombre -> 
+                    servidor_programador ! { De, {inscribir, { Evento, Nombre } }}
+            end,
+            servidor(Registrados, Loggeados);
+        
+        % Mensajes de organizador
+        {De, UserType, {crear_evento, Evento, Capacidad}} ->
+            case organizador_loggeado(De, UserType, Loggeados) of
+                no_existe ->
+                    De ! {servidor_registro, error_organizador_no_loggeado};
+                existe ->
+                    servidor_programador ! { De, {crear_evento, { Evento, Capacidad } }}
+            end,
+            servidor(Registrados, Loggeados);
+        {De, UserType, {eliminar_evento, Evento}} ->
+            case organizador_loggeado(De, UserType, Loggeados) of
+                no_existe ->
+                    De ! {servidor_registro, error_organizador_no_loggeado};
+                existe ->
+                    servidor_programador ! { De, {eliminar_evento, Evento }}
+            end,
+            servidor(Registrados, Loggeados);
+        {De, UserType, {modificar_evento, Evento, Capacidad}} ->
+            case organizador_loggeado(De, UserType, Loggeados) of
+                no_existe ->
+                    De ! {servidor_registro, error_organizador_no_loggeado};
+                existe ->
+                    servidor_programador ! { De, {modificar_capacidad, { Evento, Capacidad } }}
+            end,
+            servidor(Registrados, Loggeados);
 		_ ->
 			io:format("[SERVIDOR_REGISTRO]: Mensaje no reconocido.~n")
 	end.
