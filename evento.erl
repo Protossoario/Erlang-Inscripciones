@@ -33,7 +33,7 @@ evento(Capacidad, Inscritos) ->
                     if
                         length(Inscritos) < Capacidad ->
                         Pid ! {servidor_evento, inscripcion_exitosa},
-                            evento(Capacidad, [Inscritos|Usuario]);
+                            evento(Capacidad, [Usuario|Inscritos]);
                         true ->
                             Pid ! {servidor_evento, evento_lleno},
                             evento(Capacidad, Inscritos)
