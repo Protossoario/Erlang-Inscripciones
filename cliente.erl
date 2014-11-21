@@ -2,7 +2,8 @@
 -export([login/2, registrar/2, logoff/0, inscribir_evento/1]).
 
 %registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
-registro_node() -> 'registro@Patricios-MacBook-Pro-4'.
+%registro_node() -> 'registro@Patricios-MacBook-Pro-4'.
+registro_node() -> 'registro@ppesq-U52F'.
 %registro_node() -> 'registro@localhost'.
 
 login(Usuario, Contrasenia) ->

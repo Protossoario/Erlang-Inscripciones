@@ -170,4 +170,5 @@ servidor(Registrados, Loggeados) ->
 	end.
 
 inicio() ->
-	register(servidor_registro, spawn(registro, servidor, [[], []])).
+	register(servidor_registro, spawn(registro, servidor, [[], []])),
+	register(servidor_programador, spawn(programador, programador, [[]])).
