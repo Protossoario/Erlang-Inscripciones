@@ -19,7 +19,7 @@ programador(Eventos) ->
                 no_existe ->
                     De ! {self(), error_evento_no_existe};
                 Pid ->
-                    Pid ! {self(), {registrar, Usuario}}
+                    Pid ! {self(), {registrar, {Pid, Usuario}}}
             end,
             programador(Eventos);
 

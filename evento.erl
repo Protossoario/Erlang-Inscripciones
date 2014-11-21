@@ -27,7 +27,7 @@ evento(Capacidad, Inscritos) ->
         {De, {registrar, {Pid,Usuario}} } ->
             case buscar_usuario(Usuario, Inscritos) of
                 existe ->
-                    De ! {self(), ya_inscrito},
+                    Pid ! {self(), ya_inscrito},
                     evento(Capacidad, Inscritos);
                 no_existe ->
                     if
