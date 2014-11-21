@@ -1,5 +1,10 @@
 #Programa de eventos en Erlang
 
+Patricio Beltran
+Jose Alberto Esquivel
+Martha Iliana Garcia
+Eduardo Sanchez
+
 ## Guia de usabilidad
 
 ###Compilar
