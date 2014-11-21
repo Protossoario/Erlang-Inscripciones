@@ -1,5 +1,5 @@
 -module(organizador).
--export([login/2, registrar/2, logoff/0, crear_evento/2, eliminar_evento/1, modificar_capacidad/2]).
+-export([consultar_evento/1, listar_eventos/0, login/2, registrar/2, logoff/0, crear_evento/2, eliminar_evento/1, modificar_capacidad/2]).
 
 %registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
 registro_node() -> 'registro@Patricios-MacBook-Pro-4'.
@@ -23,6 +23,11 @@ eliminar_evento(Evento) ->
 
 modificar_capacidad(Evento, Capacidad) ->
   llama_registro({modificar_evento, Evento, Capacidad}).
+
+consultar_evento(Evento) ->
+    llama_registro({consultar_evento, Evento}).
+listar_eventos() ->
+    llama_registro({listar_eventos}).
 
 llama_registro(Mensaje) ->
 	Node = registro_node(),

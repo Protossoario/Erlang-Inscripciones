@@ -141,6 +141,22 @@ servidor(Registrados, Loggeados) ->
             servidor(Registrados, Loggeados);
         
         % Mensajes de organizador
+        {De, UserType, {consultar_evento, Evento}} ->
+            case organizador_loggeado(De, UserType, Loggeados) of
+                no_existe ->
+                    De ! {servidor_registro, error_organizador_no_loggeado};
+                existe ->
+                    servidor_programador ! { De, {listar_inscritos, Evento} }
+            end,
+            servidor(Registrados, Loggeados);
+        {De, UserType, {listar_eventos}} ->
+            case organizador_loggeado(De, UserType, Loggeados) of
+                no_existe ->
+                    De ! {servidor_registro, error_organizador_no_loggeado};
+                existe ->
+                    servidor_programador ! { De, {listar_eventos} }
+            end,
+            servidor(Registrados, Loggeados);
         {De, UserType, {crear_evento, Evento, Capacidad}} ->
             case organizador_loggeado(De, UserType, Loggeados) of
                 no_existe ->

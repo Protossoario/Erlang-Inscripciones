@@ -1,5 +1,5 @@
 -module(cliente).
--export([login/2, registrar/2, logoff/0, inscribir_evento/1]).
+-export([salir_evento/1, login/2, registrar/2, logoff/0, inscribir_evento/1]).
 
 %registro_node() -> 'registro@Eduardos-MacBook-Pro-5'.
 registro_node() -> 'registro@Patricios-MacBook-Pro-4'.
@@ -17,6 +17,10 @@ logoff() ->
 
 inscribir_evento(Evento) ->
   llama_registro({inscribir_evento, Evento}).
+
+salir_evento(Evento) ->
+  llama_registro({salir_evento, Evento}).
+
 
 llama_registro(Mensaje) ->
 	Node = registro_node(),
