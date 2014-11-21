@@ -136,7 +136,7 @@ servidor(Registrados, Loggeados) ->
                 no_existe -> 
                     De ! {servidor_registro, error_usuario_no_loggeado};
                 Nombre -> 
-                    servidor_programador ! { De, {inscribir, { Evento, Nombre , De} }}
+                    servidor_programador ! { De, {inscribir, { Evento, Nombre }}}
             end,
             servidor(Registrados, Loggeados);
         
