@@ -139,6 +139,14 @@ servidor(Registrados, Loggeados) ->
                     servidor_programador ! { De, {inscribir, { Evento, Nombre }}}
             end,
             servidor(Registrados, Loggeados);
+        {De, UserType, {salir_evento, Evento}} ->
+            case obtener_nombre(De, UserType, Loggeados) of
+                no_existe -> 
+                    De ! {servidor_registro, error_usuario_no_loggeado};
+                Nombre -> 
+                    servidor_programador ! { De, {eliminar_usuario, { Evento, Nombre }}}
+            end,
+            servidor(Registrados, Loggeados);
         
         % Mensajes de organizador
         {De, UserType, {consultar_evento, Evento}} ->
