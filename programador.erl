@@ -19,7 +19,7 @@ programador(Eventos) ->
                 no_existe ->
                     De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
-                    Pid ! {servidor_programador, {registrar, De, Usuario}}
+                  Pid ! {self(), {registrar, { De, Usuario }}}
             end,
             programador(Eventos);
 
@@ -52,7 +52,7 @@ programador(Eventos) ->
                 no_existe ->
                     De ! {servidor_programador, error_evento_no_existe};
                 Pid ->
-                    Pid ! {servidor_programador, {cambiar_capacidad, Pid, N}}
+                    Pid ! {self(), {cambiar_capacidad, De, N}}
             end,
             programador(Eventos);
 
