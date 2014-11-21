@@ -1,5 +1,5 @@
 -module(evento).
--compile(export_all).
+-export([evento/2]).
 
 % Busca en la lista de usuarios inscritos si el usuario existe.
 % - existe: el usuario esta en la lista.

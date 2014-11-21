@@ -1,5 +1,5 @@
 -module(programador).
--compile(export_all).
+-export([iniciarProgramador/0, programador/1]).
 
 buscar_evento(Evento, [{Pid, Evento} | _ ]) -> Pid;
 buscar_evento(Evento, [ _ | T ]) -> buscar_evento(Evento, T);
